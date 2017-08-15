@@ -5,26 +5,6 @@ from Queue import heapq as hq
 from copy import deepcopy
 import random
 
-# def astar2(start):
-# 	explored=set()
-# 	open = []
-# 	hq.heappush(open,Node(start))
-
-# 	while open:
-# 		current = hq.heappop(open)
-# 		if isGoal(current):
-# 			return current
-# 		explored.add(str(current))
-
-# 		for succ in successors(current):
-# 			succ.g = current.g + 1
-# 			succ.f = succ.g + h2(succ)
-
-# 			if str(succ) not in explored:
-# 				hq.heappush(open,succ)
-# 			if checkFrontier(open,succ):
-# 				hq.heappush(open,succ)
-
 def astar(start,h):
 	explored=set()
 	open = []

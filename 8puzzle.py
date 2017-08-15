@@ -122,10 +122,9 @@ def printPuzzle(puzzle):
 			print ""
 	print "\n"
 
-
 if __name__ == '__main__':
-	# Prompt
-	"""
+	# Interactive Prompt
+	#######################################################################################
 	print "8-Puzzle Project Analysis"
 	while True:
 		print "[1] Generate Random 8-Puzzle"
@@ -160,9 +159,10 @@ if __name__ == '__main__':
 		else:
 			print "Puzzle inputed is not solvable. Try Again!\n"
 			continue
+	#######################################################################################
+	
 	"""
-	"""
-	# Get Table Data
+	# Table Data
 	depth = 20
 	avgRunTime = [0,0]
 	avgCost = [0,0]
@@ -206,9 +206,12 @@ if __name__ == '__main__':
 	print "h1:", avgRunTime[0]
 	print "h2:", avgRunTime[1]
 	print "\nNumber of cases:", i
+	#######################################################################################
 	"""
 
+	"""
 	# 3 Solutions
+	print '3 Solutions:'
 	puzzles = ["541632078", "358602147", "580362147"]
 	for p in puzzles:
 		if isSolvable(p):
@@ -218,8 +221,9 @@ if __name__ == '__main__':
 			while i:
 				path[:0]=[i.state]
 				i = i.parent
-			print "Initial State:"
+			print "Initial State"
 			for s in path:
 				printPuzzle(s)
 			print "Goal State"
 		print "---------------------------------------"
+	"""

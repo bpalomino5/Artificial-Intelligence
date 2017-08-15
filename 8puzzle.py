@@ -13,6 +13,7 @@ def astar(start,h,d=None):
 
 	while open:
 		current = hq.heappop(open)
+
 		if d >= 2:
 			if current.g == d:
 				if isGoal(current):
@@ -157,21 +158,50 @@ if __name__ == '__main__':
 		else:
 			print "Puzzle inputed is not solvable. Try Again!\n"
 			continue
-	"""
-	# Get Solution Depths
-	depth = 2
+
+	# Get Table Data
+	depth = 20
+	avgRunTime = [0,0]
+	avgCost = [0,0]
+
 	print "depth = ",depth
+	print "---------------------------------------------"
 	i=0
-	while i < 100:
+	while i < 50:
 		puzzle = "".join(random.sample("012345678", len("012345678")))
 		if isSolvable(puzzle):
-			c = astar(puzzle,h2,depth)
+			t1 = time.time()
+			c = astar(puzzle,h1,depth)
+			t2 = time.time()
 			if c:
 				if c[0] == depth:
-					print "i:",i,puzzle
+					t = (t2-t1) * 1000
+					print i,puzzle
+					print "h1:", "time:", t, "Nodes:",c[1]
+					avgRunTime[0] += t
+					avgCost[0] += c[1]
+
+					t1 = time.time()
+					c = astar(puzzle,h2)
+					t2 = time.time()
+					t = (t2-t1) * 1000
+					print "h2:", "time:",t,"Nodes:",c[1]
+					avgRunTime[1] += t
+					avgCost[1] += c[1]
+					print "---------------------------------------------"
 					i+=1
 
-	
-	# t1 = time.time()
-	# t2 = time.time()
-	# str((t2-t1) * 1000) = ms of time
+	avgRunTime[0] /= i
+	avgRunTime[1] /= i
+	avgCost[0] /= i
+	avgCost[1] /=i
+
+	print "\nAverage Search Cost:"
+	print "h1:", avgCost[0]
+	print "h2:", avgCost[1]
+	print "\nAverage Run Time:"
+	print "h1:", avgRunTime[0]
+	print "h2:", avgRunTime[1]
+	print "\nNumber of cases:", i
+	"""
+	# 3 Solutions

@@ -4,14 +4,22 @@
 from Queue import heapq as hq
 from copy import deepcopy
 import random
+import time
 
-def astar(start,h):
+def astar(start,h,d=None):
 	explored=set()
 	open = []
 	hq.heappush(open,Node(start))
 
 	while open:
 		current = hq.heappop(open)
+		if d >= 2:
+			if current.g == d:
+				if isGoal(current):
+					return [current.g,len(open) + len(explored)+1]
+				else:
+					return None
+
 		if isGoal(current):
 			return [current.g,len(open) + len(explored)+1]
 		explored.add(str(current))
@@ -23,15 +31,7 @@ def astar(start,h):
 				hq.heappush(open,succ)
 	return None
 
-def checkFrontier(open, node):
-	if node in open:
-		i = open.index(node)
-		if open[i].f > node.f:
-			del open[i]
-			hq.heapify(open)
-			return True
-	return False
-
+# Number of misplaced tiles
 def h1(node):
 	return sum(x!=y for x,y in zip(node.state,"012345678"))
 
@@ -123,6 +123,7 @@ def printPuzzle(puzzle):
 
 if __name__ == '__main__':
 	# Prompt
+	"""
 	print "8-Puzzle Project Analysis"
 	while True:
 		print "[1] Generate Random 8-Puzzle"
@@ -156,14 +157,21 @@ if __name__ == '__main__':
 		else:
 			print "Puzzle inputed is not solvable. Try Again!\n"
 			continue
+	"""
+	# Get Solution Depths
+	depth = 2
+	print "depth = ",depth
+	i=0
+	while i < 100:
+		puzzle = "".join(random.sample("012345678", len("012345678")))
+		if isSolvable(puzzle):
+			c = astar(puzzle,h2,depth)
+			if c:
+				if c[0] == depth:
+					print "i:",i,puzzle
+					i+=1
 
-
-	# puzzle = "541763820"
-	# i=0
-	# while i < 100:
-	# 	if isSolvable(puzzle):
-	# 		print "i:",i,
-	# 		c = astar(puzzle)
-	# 		print puzzle, c.g
-	# 		i+=1
-	# 	puzzle = "".join(random.sample(puzzle, len(puzzle)))
+	
+	# t1 = time.time()
+	# t2 = time.time()
+	# str((t2-t1) * 1000) = ms of time

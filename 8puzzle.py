@@ -14,21 +14,23 @@ def astar(start,h,d=None):
 	while open:
 		current = hq.heappop(open)
 
+		# used for getting table data
 		if d >= 2:
 			if current.g == d:
 				if isGoal(current):
-					return [current.g,len(open) + len(explored)+1]
+					return [current,len(open) + len(explored)+1]
 				else:
 					return None
 
 		if isGoal(current):
-			return [current.g,len(open) + len(explored)+1]
+			return [current,len(open) + len(explored)+1]
 		explored.add(str(current))
 
 		for succ in successors(current):
 			if str(succ) not in explored:
 				succ.g = current.g + 1
 				succ.f = succ.g + h(succ)
+				succ.parent = current
 				hq.heappush(open,succ)
 	return None
 
@@ -114,12 +116,11 @@ def createPuzzle():
 	return str(r1+r2+r3)
 
 def printPuzzle(puzzle):
-	print "\n8-Puzzle:"
 	for i in range(9):
 		print puzzle[i],
 		if i == 2 or i == 5:
 			print ""
-	print ""
+	print "\n"
 
 
 if __name__ == '__main__':
@@ -132,7 +133,7 @@ if __name__ == '__main__':
 		print "[3] Exit\n"
 		print "Command: ",
 		command = input()
-	
+		print ("\n" * 50)
 		if command == 1:
 			puzzle = "".join(random.sample("012345678", len("012345678")))
 		elif command == 2:
@@ -142,23 +143,25 @@ if __name__ == '__main__':
 			break
 
 		if isSolvable(puzzle):
+			print "\n8-Puzzle:"
 			printPuzzle(puzzle) 
 			print "\nh1:"
 			c = astar(puzzle,h1)
 			print "Search Cost: ", c[1]
-			print "Solution Depth:",c[0]
+			print "Solution Depth:",c[0].g
 			print ""
 			print ""
 
 			print "h2:"
 			c = astar(puzzle,h2)
 			print "Search Cost: ", c[1]
-			print "Solution Depth:",c[0]
+			print "Solution Depth:",c[0].g
 			print ""
 		else:
 			print "Puzzle inputed is not solvable. Try Again!\n"
 			continue
-
+	"""
+	"""
 	# Get Table Data
 	depth = 20
 	avgRunTime = [0,0]
@@ -174,7 +177,7 @@ if __name__ == '__main__':
 			c = astar(puzzle,h1,depth)
 			t2 = time.time()
 			if c:
-				if c[0] == depth:
+				if c[0].g == depth:
 					t = (t2-t1) * 1000
 					print i,puzzle
 					print "h1:", "time:", t, "Nodes:",c[1]
@@ -204,4 +207,19 @@ if __name__ == '__main__':
 	print "h2:", avgRunTime[1]
 	print "\nNumber of cases:", i
 	"""
+
 	# 3 Solutions
+	puzzles = ["541632078", "358602147", "580362147"]
+	for p in puzzles:
+		if isSolvable(p):
+			c = astar(p,h2)
+			path = [c[0].state]
+			i = c[0].parent
+			while i:
+				path[:0]=[i.state]
+				i = i.parent
+			print "Initial State:"
+			for s in path:
+				printPuzzle(s)
+			print "Goal State"
+		print "---------------------------------------"

@@ -31,12 +31,12 @@ def getAnnealingSuccessor(board,maxH,T):
     col = random.randint(0,len(board)-1)
     bcopy[col] = row
     h = getHcost(bcopy)
-    if h < maxH:
-      found = True
+    if h < maxH: 
+    	found = True
     else:
-      dE = maxH - h
-      probability = min(1,math.exp(dE/T))
-      found = random.random() <= probability
+    	dE = maxH - h
+    	probability = min(1,math.exp(dE/T))
+    	found = random.random() <= probability
   return bcopy
 
 def HillClimbing(board):
@@ -88,7 +88,7 @@ def getHcost(board):
 
 if __name__ == '__main__':
 	print "N-Queen Solver"
-	n = 8
+	n = 22
 	size=100
 	print "n:",n,"\n"
 

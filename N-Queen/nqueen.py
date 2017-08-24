@@ -5,13 +5,13 @@ import random
 def HillClimbing(board):
 	current = Node(board)
 	while True:
-		neighbor = getSuccessor(current)
+		neighbor = Node(getSuccessor(current))
 
 		# For debugging purposes
 		# print "c:",current.getValue()
 		# print "n:",neighbor.getValue()
 		# print "-------------------"
-		if neighbor <= current:
+		if getHcost(neighbor.board) >= getHcost(current.board) or getHcost(current.board) == 0:
 			return current
 		current = neighbor
 
@@ -22,12 +22,12 @@ def getSuccessor(n):
 		for j in range(len(n.board)):
 			if n.board[i] == j:
 				continue
-			copy = Node(list(n.board))
-			copy.board[i] = j
-			moves[(i,j)] = copy.getValue()
+			bcopy = list(n.board)
+			bcopy[i] = j
+			moves[(i,j)] = getHcost(bcopy)
 
 	best_moves = []
-	maxH= n.getValue()
+	maxH= getHcost(n.board)
 	for k,v in moves.iteritems():
 		if v < maxH:
 			maxH = v
@@ -39,35 +39,46 @@ def getSuccessor(n):
 	    pick = random.randint(0,len(best_moves) - 1)
 	    col = best_moves[pick][0]
 	    row = best_moves[pick][1]
-	    copy.board = list(n.board)
-	    copy.board[col] = row
+	    bcopy = list(n.board)
+	    bcopy[col] = row
 
-	return copy
+	return bcopy
+
+def getHcost(board):
+	h=0
+	for i in range(len(board)):
+		for j in range(i + 1, len(board)):
+			if board[i] == board[j]:
+				h+=1
+			offset = j-i
+			if board[i] == board[j] - offset or board[i] == board[j] + offset:
+				h+=1
+	return h
 
 class Node(object):
 	def __init__(self, board=None):
 		self.board = board
-	def getValue(self):
-		h=0
-		for i in range(len(self.board)):
-			for j in range(i + 1, len(self.board)):
-				if self.board[i] == self.board[j]:
-					h+=1
-				offset = j-i
-				if self.board[i] == self.board[j] - offset or self.board[i] == self.board[j] + offset:
-					h+=1
-		return h
-	def __cmp__(self,other):
-		if self.getValue() >= other.getValue() or other.getValue() == 0:
-			return -1
-		elif self.getValue() < other.getValue():
-			return 1
-		else: return 0
+	# def getValue(self):
+	# 	h=0
+	# 	for i in range(len(self.board)):
+	# 		for j in range(i + 1, len(self.board)):
+	# 			if self.board[i] == self.board[j]:
+	# 				h+=1
+	# 			offset = j-i
+	# 			if self.board[i] == self.board[j] - offset or self.board[i] == self.board[j] + offset:
+	# 				h+=1
+	# 	return h
+	# def __cmp__(self,other):
+	# 	if self.getValue() >= other.getValue() or other.getValue() == 0:
+	# 		return -1
+	# 	elif self.getValue() < other.getValue():
+	# 		return 1
+	# 	else: return 0
 		
 if __name__ == '__main__':
 	# testing steepest ascent hill climbing
-	# board = [3,2,1,4,3,2,1,2]
+	n = 8
 	for i in range(100):
-		board = random.sample(range(8),8)
-		n = HillClimbing(board)
-		print n.board," val:" ,n.getValue()
+		board = random.sample(range(n),n)
+		q = HillClimbing(board)
+		print q.board," val:" ,getHcost(q.board)

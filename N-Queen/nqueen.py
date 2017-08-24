@@ -1,95 +1,64 @@
-# Author: Brandon Palomino
-# Date: 8/23/17
-# Description: N-Queen solver for n=22, using two implementations of local search algorithms
 import random
 import time
 import math
 
+# Author: Brandon Palomino
+# Date: 8/23/17
+# Description: N-Queen solver for n=22, using two implementations of local search algorithms
 
-class Node(object):
-	def __init__(self, board=None):
-		self.board = board
-
-def annealing(board):
-	temp = len(board)**2
+def SimulatedAnnealing(board):
+	T = len(board)**2
 	anneal_rate = 0.95
-	new_h_cost = getHcost(board)
+	h = getHcost(board)
 
-	steps=0
-	while new_h_cost > 0:
-		board = make_annealing_move(board,new_h_cost,temp)
-		new_h_cost = getHcost(board)
-		#Make sure temp doesn't get impossibly low
-		new_temp = max(temp * anneal_rate,0.01)
-		temp = new_temp
-		steps+=1
-		if steps >= 50000: 
+	i=0
+	while h > 0:
+		board = getAnnealingSuccessor(board,h,T)
+		h = getHcost(board)
+		T = max(T * anneal_rate,0.01)
+		i+=1
+		if i >= 50000: 
 			break
 	return board
 
-def make_annealing_move(board,h_to_beat,temp):
-  board_copy = list(board)
-  found_move = False
+def getAnnealingSuccessor(board,maxH,T):
+  bcopy = list(board)
+  found = False
  
-  while not found_move:
-    board_copy = list(board)
-    new_row = random.randint(0,len(board)-1)
-    new_col = random.randint(0,len(board)-1)
-    board_copy[new_col] = new_row
-    new_h_cost = getHcost(board_copy)
-    if new_h_cost < h_to_beat:
-      found_move = True
+  while not found:
+    bcopy = list(board)
+    row = random.randint(0,len(board)-1)
+    col = random.randint(0,len(board)-1)
+    bcopy[col] = row
+    h = getHcost(bcopy)
+    if h < maxH:
+      found = True
     else:
-      #How bad was the choice?
-      delta_e = h_to_beat - new_h_cost
-      #Probability can never exceed 1
-      accept_probability = min(1,math.exp(delta_e/temp))
-      found_move = random.random() <= accept_probability
-  return board_copy
-
-
-def SimulatedAnnealing(board, schedule):
-	current = Node(board)
-	t = 1
-	while True:
-		T = schedule[t]
-		if T==0:
-			return current
-		next = Node(randomSuccessor(current))
-		E = getHcost(next) - getHcost(current)
-		if E > 0:
-			current = next
-		else:
-			current=next
-		t+=1
-
+      dE = maxH - h
+      probability = min(1,math.exp(dE/T))
+      found = random.random() <= probability
+  return bcopy
 
 def HillClimbing(board):
-	current = Node(board)
+	current = board
 	while True:
-		neighbor = Node(getSuccessor(current))
-
-		# For debugging purposes
-		# print "c:",current.getValue()
-		# print "n:",neighbor.getValue()
-		# print "-------------------"
-		if getHcost(neighbor.board) >= getHcost(current.board) or getHcost(current.board) == 0:
+		neighbor = getHillSuccessor(current)
+		if getHcost(neighbor) >= getHcost(current) or getHcost(current) == 0:
 			return current
 		current = neighbor
 
-
-def getSuccessor(n):
+def getHillSuccessor(board):
 	moves = {}
-	for i in range(len(n.board)):
-		for j in range(len(n.board)):
-			if n.board[i] == j:
+	for i in range(len(board)):
+		for j in range(len(board)):
+			if board[i] == j:
 				continue
-			bcopy = list(n.board)
+			bcopy = list(board)
 			bcopy[i] = j
 			moves[(i,j)] = getHcost(bcopy)
 
 	best_moves = []
-	maxH= getHcost(n.board)
+	maxH= getHcost(board)
 	for k,v in moves.iteritems():
 		if v < maxH:
 			maxH = v
@@ -101,7 +70,7 @@ def getSuccessor(n):
 	    pick = random.randint(0,len(best_moves) - 1)
 	    col = best_moves[pick][0]
 	    row = best_moves[pick][1]
-	    bcopy = list(n.board)
+	    bcopy = list(board)
 	    bcopy[col] = row
 	return bcopy
 
@@ -118,25 +87,30 @@ def getHcost(board):
 
 
 if __name__ == '__main__':
-	n = 22
+	print "N-Queen Solver"
+	n = 8
+	size=100
+	print "n:",n,"\n"
+
 	# testing steepest ascent hill climbing
 	print "Hill Climbing"
+	print "*************"
 	avgTime = 0
 	numSolutions = 0
-	for i in range(100):
+	for i in range(size):
 		board = random.sample(range(n),n)
 		t1 = time.time()
 		q = HillClimbing(board)
 		t2 = time.time()
 		elaspedTime = t2-t1
-		h = getHcost(q.board)
+		h = getHcost(q)
 		if h==0:
 			numSolutions+=1
-		print i+1,q.board
+		print i+1,q
 		print "h:" ,h
 		print "t:",elaspedTime
 		avgTime +=elaspedTime
-		print "---------------------------"
+		print "----------------------------------------------------------------------------------"
 	avgTime /= 100
 	print "Average Time:",avgTime
 	print "Percentage of solutions:",numSolutions,"%"
@@ -144,17 +118,24 @@ if __name__ == '__main__':
 
 	# testing simulated annealing
 	print "Simulated Annealing"
+	print "*******************"
 	avgTime = 0
-	for i in range(100):
+	numSolutions = 0
+	for i in range(size):
 		board = random.sample(range(n),n)
 		t1 = time.time()
-		q = annealing(board)
+		q = SimulatedAnnealing(board)
 		t2 = time.time()
 		elaspedTime = t2-t1
+		h = getHcost(q)
+		if h==0:
+			numSolutions+=1
 		print i+1,q
-		print "h:",getHcost(q)
+		print "h:",h
 		print "t:",elaspedTime
 		avgTime+=elaspedTime
-		print "----------------------------"
+		print "----------------------------------------------------------------------------------"
 	avgTime /=100
 	print "Average Time:",avgTime
+	print "Percentage of solutions:",numSolutions,"%"
+

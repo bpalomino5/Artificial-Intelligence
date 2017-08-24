@@ -4,10 +4,14 @@
 import random
 def HillClimbing(board):
 	current = Node(board)
-
 	while True:
 		neighbor = getSuccessor(current)
-		if neighbor.getValue() >= current.getValue():
+
+		# For debugging purposes
+		# print "c:",current.getValue()
+		# print "n:",neighbor.getValue()
+		# print "-------------------"
+		if neighbor <= current:
 			return current
 		current = neighbor
 
@@ -18,25 +22,27 @@ def getSuccessor(n):
 		for j in range(len(n.board)):
 			if n.board[i] == j:
 				continue
-			board_copy = list(n.board)
-			board_copy[i] = j
-			moves[(i,j)] = getHcost(board_copy)
-	
+			copy = Node(list(n.board))
+			copy.board[i] = j
+			moves[(i,j)] = copy.getValue()
+
 	best_moves = []
-	hbeat= getHcost(n.board)
+	maxH= n.getValue()
 	for k,v in moves.iteritems():
-		if v < hbeat:
-			hbeat = v
+		if v < maxH:
+			maxH = v
 	for k,v in moves.iteritems():
-		if v==hbeat:
+		if v==maxH:
 			best_moves.append(k)
 
 	if len(best_moves) > 0:
 	    pick = random.randint(0,len(best_moves) - 1)
 	    col = best_moves[pick][0]
 	    row = best_moves[pick][1]
-	    n.board[col] = row
-	return Node(n.board)
+	    copy.board = list(n.board)
+	    copy.board[col] = row
+
+	return copy
 
 class Node(object):
 	def __init__(self, board=None):
@@ -51,52 +57,17 @@ class Node(object):
 				if self.board[i] == self.board[j] - offset or self.board[i] == self.board[j] + offset:
 					h+=1
 		return h
-
-def getHcost(board):
-	h=0
-	for i in range(len(board)):
-		for j in range(i + 1, len(board)):
-			if board[i] == board[j]:
-				h+=1
-			offset = j-i
-			if board[i] == board[j] - offset or board[i] == board[j] + offset:
-				h+=1
-	return h
+	def __cmp__(self,other):
+		if self.getValue() >= other.getValue() or other.getValue() == 0:
+			return -1
+		elif self.getValue() < other.getValue():
+			return 1
+		else: return 0
 		
 if __name__ == '__main__':
-	# testing node
-	# n = Node([0,0,1,2,4])
-	# m = Node([2,7,3,6,0,5,1,4])
-	# print n.getValue()
-	# print m.getValue()
-	n = HillClimbing([0,0,1,2,4])
-	m = HillClimbing([3,2,1,4,3,2,1,2])
-	print getHcost([3,2,1,4,3,2,1,2])
-	print m.getValue()
-
-	# moves = {}
-	# for i in range(len(n.board)):
-	# 	for j in range(len(n.board)):
-	# 		if n.board[i] == j:
-	# 			continue
-	# 		board_copy = list(n.board)
-	# 		board_copy[i] = j
-	# 		moves[(i,j)] = getHcost(board_copy)
-	
-	# best_moves = []
-	# hbeat= getHcost(n.board)
-	# for k,v in moves.iteritems():
-	# 	print k,v
-	# 	if v < hbeat:
-	# 		hbeat = v
-	# print hbeat
-	# for k,v in moves.iteritems():
-	# 	if v==hbeat:
-	# 		best_moves.append(k)
-
-	# if len(best_moves) > 0:
-	#     pick = random.randint(0,len(best_moves) - 1)
-	#     col = best_moves[pick][0]
-	#     row = best_moves[pick][1]
-	#     n.board[col] = row
-   
+	# testing steepest ascent hill climbing
+	# board = [3,2,1,4,3,2,1,2]
+	for i in range(100):
+		board = random.sample(range(8),8)
+		n = HillClimbing(board)
+		print n.board," val:" ,n.getValue()

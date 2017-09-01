@@ -2,6 +2,9 @@
 # Date: 8/31/17
 # Description: Program where user plays 4 in a line game against CPU that uses alpha-beta pruning to calculate best moves
 
+
+letters = ["A","B","C","D","E","F","G","H"]
+
 def setup():
 	board = [["-"]*8 for i in range(8)]
 	print "Would you like to go first (y/n)? : ",
@@ -21,7 +24,7 @@ def printboard(board):
 	print "\n"
 
 def getMove(board):
-	letters = ["A","B","C","D","E","F","G","H"]
+	# letters = ["A","B","C","D","E","F","G","H"]
 	print "Enter your move p1: ",
 	try:
 		move = raw_input()
@@ -45,7 +48,7 @@ def getMove(board):
 
 
 def makeMove(board):
-	letters = ["A","B","C","D","E","F","G","H"]
+	# letters = ["A","B","C","D","E","F","G","H"]
 	print "Enter your move p2: ",
 	try:
 		move = raw_input()
@@ -81,6 +84,29 @@ def checkGameOver(board,player):
 			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == player:
 				return True
 
+negInfinity = -99999999
+posInfinity = 999999999
+def minimax(board,depth,alpha,beta, maximizingPlayer):
+	if depth == 0:
+		return eval(board)
+
+	if maximizingPlayer:
+		v = negInfinity
+		for succ in successors(board):
+			v = max(v, minimax(succ, depth -1, alpha, beta, False))
+			alpha = max(alpha,v)
+			if beta <= alpha:
+				break
+		return v
+
+	else:
+		v = posInfinity
+		for succ in successors(board):
+			v = min(v, minimax(succ, depth-1, alpha, beta, True))
+			beta = min(beta,v)
+			if beta <= alpha:
+				break
+		return v
 
 
 if __name__ == '__main__':

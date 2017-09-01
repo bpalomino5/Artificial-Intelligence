@@ -2,7 +2,7 @@
 # Date: 8/31/17
 # Description: Program where user plays 4 in a line game against CPU that uses alpha-beta pruning to calculate best moves
 
-
+from copy import deepcopy
 letters = ["A","B","C","D","E","F","G","H"]
 
 def setup():
@@ -25,7 +25,7 @@ def printboard(board):
 
 def getMove(board):
 	# letters = ["A","B","C","D","E","F","G","H"]
-	print "Enter your move p1: ",
+	print "Enter your move: ",
 	try:
 		move = raw_input()
 		if len(move) != 2:
@@ -46,6 +46,9 @@ def getMove(board):
 		print "Invalid move, Try Again!"
 		getMove(board)
 
+def makeMoveAI(board):
+	result = minimax(board,2,negInfinity,posInfinity,False)
+	return result[1]
 
 def makeMove(board):
 	# letters = ["A","B","C","D","E","F","G","H"]
@@ -85,43 +88,160 @@ def checkGameOver(board,player):
 				return True
 
 negInfinity = -99999999
-posInfinity = 999999999
+posInfinity =  99999999
 def minimax(board,depth,alpha,beta, maximizingPlayer):
 	if depth == 0:
-		return eval(board)
+		return evaluation(board)
 
 	if maximizingPlayer:
 		v = negInfinity
-		for succ in successors(board):
+		for succ in successors(board,maximizingPlayer):
 			v = max(v, minimax(succ, depth -1, alpha, beta, False))
-			alpha = max(alpha,v)
+			if v > alpha:
+				alpha = v
+				best=succ
 			if beta <= alpha:
 				break
-		return v
+		return [v,best]
 
 	else:
 		v = posInfinity
-		for succ in successors(board):
+		for succ in successors(board,maximizingPlayer):
 			v = min(v, minimax(succ, depth-1, alpha, beta, True))
-			beta = min(beta,v)
+			if v < beta:
+				beta = v
+				best=succ
 			if beta <= alpha:
 				break
-		return v
+		return [v,best]
 
+def successors(board,max):
+	next = []
+	for i in range(8):
+		for j in range(8):
+			if board[i][j]=="-":
+				b = deepcopy(board)
+				if max:
+					b[i][j]="O"
+				else:
+					b[i][j]="X"
+				next.append(b)
+	return next
+
+def evaluation(board):
+	score = 0
+	player = "O"
+	# horizontal check 4-in-a-row
+	for j in range(8-3):
+		for i in range(8-3):
+			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == player:
+				score+=1000
+
+	# vertical check 4-in-a-row
+	for i in range(8-3):
+		for j in range(8-3):
+			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == player:
+				score+=1000
+
+	# horizontal check 3-in-a-row
+	for j in range(8-3):
+		for i in range(8-3):
+			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == "-" or board[i][j] == "-" and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == player:
+				score+=100
+
+	# vertical check 3-in-a-row
+	for i in range(8-2):
+		for j in range(8-2):
+			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i][j+3] == "-" or board[i][j] == "-" and board[i+1][j] == player and board[i+2][j] == player and board[i][j+3] == player:
+				score+=100
+
+	# horizontal check 2-in-a-row
+	for j in range(8-3):
+		for i in range(8-3):
+			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == "-" and board[i][j+3] == "-" or board[i][j] == "-" and board[i][j+1] == "-" and board[i][j+2] == player and board[i][j+3] == player:
+				score+=10
+
+	# vertical check 2-in-a-row
+	for i in range(8-3):
+		for j in range(8-3):
+			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == "-" and board[i+3][j] == "-" or board[i][j] == "-" and board[i+1][j] == "-" and board[i+2][j] == player and board[i+3][j] == player:
+				score+=10
+
+	# horizontal check 1-in-a-row
+	for j in range(8-3):
+		for i in range(8-3):
+			if board[i][j] == player and board[i][j+1] == "-" and board[i][j+2] == "-" and board[i][j+3] == "-" or board[i][j] == "-" and board[i][j+1] == "-" and board[i][j+2] == "-" and board[i][j+3] == player:
+				score+=1
+
+	# vertical check 1-in-a-row
+	for i in range(8-3):
+		for j in range(8-3):
+			if board[i][j] == player and board[i+1][j] == "-" and board[i+2][j] == "-" and board[i+3][j] == "-" or board[i][j] == "-" and board[i+1][j] == "-" and board[i+2][j] == "-" and board[i+3][j] == player:
+				score+=1
+
+	player = "X"
+	# horizontal check 4-in-a-row
+	for j in range(8-3):
+		for i in range(8-3):
+			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == player:
+				score-=1000
+
+	# vertical check 4-in-a-row
+	for i in range(8-3):
+		for j in range(8-3):
+			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == player:
+				score-=1000
+
+	# horizontal check 3-in-a-row
+	for j in range(8-3):
+		for i in range(8-3):
+			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == "-" or board[i][j] == "-" and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == player:
+				score-=100
+
+	# vertical check 3-in-a-row
+	for i in range(8-3):
+		for j in range(8-3):
+			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i][j+3] == "-" or board[i][j] == "-" and board[i+1][j] == player and board[i+2][j] == player and board[i][j+3] == player:
+				score-=100
+
+	# horizontal check 2-in-a-row
+	for j in range(8-3):
+		for i in range(8-3):
+			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == "-" and board[i][j+3] == "-" or board[i][j] == "-" and board[i][j+1] == "-" and board[i][j+2] == player and board[i][j+3] == player:
+				score-=10
+
+	# vertical check 2-in-a-row
+	for i in range(8-3):
+		for j in range(8-3):
+			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == "-" and board[i+3][j] == "-" or board[i][j] == "-" and board[i+1][j] == "-" and board[i+2][j] == player and board[i+3][j] == player:
+				score-=10
+
+	# horizontal check 1-in-a-row
+	for j in range(8-3):
+		for i in range(8-3):
+			if board[i][j] == player and board[i][j+1] == "-" and board[i][j+2] == "-" and board[i][j+3] == "-" or board[i][j] == "-" and board[i][j+1] == "-" and board[i][j+2] == "-" and board[i][j+3] == player:
+				score-=1
+
+	# vertical check 1-in-a-row
+	for i in range(8-3):
+		for j in range(8-3):
+			if board[i][j] == player and board[i+1][j] == "-" and board[i+2][j] == "-" and board[i+3][j] == "-" or board[i][j] == "-" and board[i+1][j] == "-" and board[i+2][j] == "-" and board[i+3][j] == player:
+				score-=1
+	return score
 
 if __name__ == '__main__':
-	settings = setup()
-	board = settings[0]
-	printboard(board)
-	while True:
-		getMove(board)
-		if checkGameOver(board,"O"):
-			print "Player 1 wins!"
-			break
-		makeMove(board)
-		if checkGameOver(board,"X"):
-			print "Player 2 wins!"
-			break
+	# settings = setup()
+	# board = settings[0]
+	# printboard(board)
+	# while True:
+	# 	getMove(board)
+	# 	if checkGameOver(board,"O"):
+	# 		print "Player 1 wins!"
+	# 		break
+	# 	board = makeMoveAI(board)
+	# 	if checkGameOver(board,"X"):
+	# 		print "AI wins!"
+	# 		break
 
 	# testing checkgameover
 	# board = [["-"]*8 for i in range(8)]
@@ -139,3 +259,35 @@ if __name__ == '__main__':
 	# board = [["-"]*8 for i in range(8)]
 	# getMove(board)
 	# printboard(board)
+
+	# testing successors()
+	# board = [["-"]*8 for i in range(8)]
+	# board[0][0]="O"
+	# board[1][0]="O"
+	# board[2][0]="O"
+	# board[3][1]="X"
+	# board[3][2]="X"
+	# board[3][3]="X"
+	# board[3][4]="X"
+	# printboard(board)
+	# print "succs"
+	# for succ in successors(board,False):
+	# 	printboard(succ)
+
+	#testing minimax
+	board = [["-"]*8 for i in range(8)]
+	board[0][0]="O"
+	board[1][0]="O"
+	board[2][0]="O"
+	board[3][1]="X"
+	board[3][2]="X"
+	board[3][3]="X"
+
+	printboard(board)
+	result = minimax(board,2,negInfinity,posInfinity,False)
+	print result
+	printboard(result[1])
+
+	# board = result[1]
+	# result = minimax(board,2,negInfinity,posInfinity,True)
+	# printboard(result[1])

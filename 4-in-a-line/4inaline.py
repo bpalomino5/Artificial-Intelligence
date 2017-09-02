@@ -47,7 +47,7 @@ def getMove(board):
 		getMove(board)
 
 def makeMoveAI(board):
-	result = minimax(board,2,negInfinity,posInfinity,False)
+	result = minimax2(board,2,negInfinity,posInfinity,False)
 	return result[1]
 
 def makeMove(board):
@@ -77,7 +77,7 @@ def checkGameOver(board,player):
 	printboard(board)
 	# horizontal check
 	for j in range(8-3):
-		for i in range(8-3):
+		for i in range(8):
 			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == player:
 				return True
 
@@ -89,6 +89,28 @@ def checkGameOver(board,player):
 
 negInfinity = -99999999
 posInfinity =  99999999
+
+def minimax2(board, depth, alpha, beta, maximizingPlayer):
+	bestPosition = board
+	if depth == 0:
+		score = evaluation(board)
+		return [score,bestPosition]
+	else:
+		for succ in successors(board,maximizingPlayer):
+			if maximizingPlayer:
+				score = minimax(succ, depth-1, alpha, beta, False)[0]
+				if score > alpha:
+					alpha = score
+					bestPosition = succ
+			else:
+				score = minimax(succ, depth-1, alpha, beta, True)[0]
+				if score < beta:
+					beta = score
+					bestPosition = succ
+			if alpha >= beta:
+				break
+	return [score,bestPosition]
+
 def minimax(board,depth,alpha,beta, maximizingPlayer):
 	if depth == 0:
 		return evaluation(board)
@@ -230,18 +252,18 @@ def evaluation(board):
 	return score
 
 if __name__ == '__main__':
-	# settings = setup()
-	# board = settings[0]
-	# printboard(board)
-	# while True:
-	# 	getMove(board)
-	# 	if checkGameOver(board,"O"):
-	# 		print "Player 1 wins!"
-	# 		break
-	# 	board = makeMoveAI(board)
-	# 	if checkGameOver(board,"X"):
-	# 		print "AI wins!"
-	# 		break
+	settings = setup()
+	board = settings[0]
+	printboard(board)
+	while True:
+		getMove(board)
+		if checkGameOver(board,"O"):
+			print "Player 1 wins!"
+			break
+		board = makeMoveAI(board)
+		if checkGameOver(board,"X"):
+			print "AI wins!"
+			break
 
 	# testing checkgameover
 	# board = [["-"]*8 for i in range(8)]
@@ -275,19 +297,17 @@ if __name__ == '__main__':
 	# 	printboard(succ)
 
 	#testing minimax
-	board = [["-"]*8 for i in range(8)]
-	board[0][0]="O"
-	board[1][0]="O"
-	board[2][0]="O"
-	board[3][1]="X"
-	board[3][2]="X"
-	board[3][3]="X"
+	# board = [["-"]*8 for i in range(8)]
+	# board[0][0]="O"
+	# board[1][0]="O"
+	# board[3][2]="X"
+	# board[3][3]="X"
 
-	printboard(board)
-	result = minimax(board,2,negInfinity,posInfinity,False)
-	print result
-	printboard(result[1])
-
-	# board = result[1]
-	# result = minimax(board,2,negInfinity,posInfinity,True)
+	# printboard(board)
+	# result = minimax2(board,2,negInfinity,posInfinity,False)
+	# print result[0]
 	# printboard(result[1])
+
+	# # board = result[1]
+	# # result = minimax(board,2,negInfinity,posInfinity,True)
+	# # printboard(result[1])

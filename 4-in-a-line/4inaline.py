@@ -8,14 +8,18 @@ import time
 letters = ["A","B","C","D","E","F","G","H"]
 negInfinity = -99999999
 posInfinity =  99999999
+timeLimit = 30
 
 def setup():
+	global timeLimit
 	board = [["-"]*8 for i in range(8)]
 	print "Would you like to go first (y/n)? : ",
 	first = raw_input()
 	print "How much time would you like (in seconds) : ",
-	timelimit = raw_input()
-	return [board,first,timelimit]
+	time = raw_input()
+	if time.isdigit():
+		timeLimit = int(time)
+	return [board,first]
 
 def printboard(board):
 	print "\n  1 2 3 4 5 6 7 8"
@@ -50,7 +54,8 @@ def getMove(board):
 		getMove(board)
 
 def makeMoveAI(board):
-	result = minimax(board,2,negInfinity,posInfinity,False)
+	t1 = time.time()
+	result = minimax(board,4,negInfinity,posInfinity,False,t1,timeLimit)
 	return result[1]
 
 def makeMove(board):
@@ -109,7 +114,6 @@ def minimax(board, depth, alpha, beta, maximizingPlayer,t1,timeLimit):
 					bestPosition = succ
 			if alpha >= beta:
 				break
-	# print "end:",alpha,beta
 	return [score,bestPosition]
 
 def successors(board,max):
@@ -160,32 +164,18 @@ def evaluation(board):
 	return score
 
 if __name__ == '__main__':
-	# settings = setup()
-	# board = settings[0]
-	# printboard(board)
-	# while True:
-	# 	getMove(board)
-	# 	if checkGameOver(board,"O"):
-	# 		print "Player 1 wins!"
-	# 		break
-	# 	board = makeMoveAI(board)
-	# 	if checkGameOver(board,"X"):
-	# 		print "AI wins!"
-	# 		break
+	settings = setup()
+	board = settings[0]
+	if settings[1].upper() == 'N':
+		board = makeMoveAI(board)
 
-
-	# testing minimax depth
-	board = [["-"]*8 for i in range(8)]
-	board[0][1]="O"
-	board[0][2]="O"
-	board[0][3]="O"
-	board[3][2]="X"
-	board[5][7]="X"
 	printboard(board)
-	t1 = time.time()
-	result = minimax(board,5,negInfinity,posInfinity,False,t1,4)
-	print result[0]
-	printboard(result[1])
-
-
-
+	while True:
+		getMove(board)
+		if checkGameOver(board,"O"):
+			print "Player 1 wins!"
+			break
+		board = makeMoveAI(board)
+		if checkGameOver(board,"X"):
+			print "AI wins!"
+			break

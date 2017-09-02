@@ -83,7 +83,7 @@ def checkGameOver(board,player):
 
 	# vertical check
 	for i in range(8-3):
-		for j in range(8-3):
+		for j in range(8):
 			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == player:
 				return True
 

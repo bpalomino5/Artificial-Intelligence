@@ -3,7 +3,10 @@
 # Description: Program where user plays 4 in a line game against CPU that uses alpha-beta pruning to calculate best moves
 
 from copy import deepcopy
+
 letters = ["A","B","C","D","E","F","G","H"]
+negInfinity = -99999999
+posInfinity =  99999999
 
 def setup():
 	board = [["-"]*8 for i in range(8)]
@@ -24,7 +27,6 @@ def printboard(board):
 	print "\n"
 
 def getMove(board):
-	# letters = ["A","B","C","D","E","F","G","H"]
 	print "Enter your move: ",
 	try:
 		move = raw_input()
@@ -47,11 +49,10 @@ def getMove(board):
 		getMove(board)
 
 def makeMoveAI(board):
-	result = minimax2(board,2,negInfinity,posInfinity,False)
+	result = minimax(board,2,negInfinity,posInfinity,False)
 	return result[1]
 
 def makeMove(board):
-	# letters = ["A","B","C","D","E","F","G","H"]
 	print "Enter your move p2: ",
 	try:
 		move = raw_input()
@@ -87,10 +88,7 @@ def checkGameOver(board,player):
 			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == player:
 				return True
 
-negInfinity = -99999999
-posInfinity =  99999999
-
-def minimax2(board, depth, alpha, beta, maximizingPlayer):
+def minimax(board, depth, alpha, beta, maximizingPlayer):
 	bestPosition = board
 	if depth == 0:
 		score = evaluation(board)
@@ -110,32 +108,6 @@ def minimax2(board, depth, alpha, beta, maximizingPlayer):
 			if alpha >= beta:
 				break
 	return [score,bestPosition]
-
-def minimax(board,depth,alpha,beta, maximizingPlayer):
-	if depth == 0:
-		return evaluation(board)
-
-	if maximizingPlayer:
-		v = negInfinity
-		for succ in successors(board,maximizingPlayer):
-			v = max(v, minimax(succ, depth -1, alpha, beta, False))
-			if v > alpha:
-				alpha = v
-				best=succ
-			if beta <= alpha:
-				break
-		return [v,best]
-
-	else:
-		v = posInfinity
-		for succ in successors(board,maximizingPlayer):
-			v = min(v, minimax(succ, depth-1, alpha, beta, True))
-			if v < beta:
-				beta = v
-				best=succ
-			if beta <= alpha:
-				break
-		return [v,best]
 
 def successors(board,max):
 	next = []
@@ -264,50 +236,3 @@ if __name__ == '__main__':
 		if checkGameOver(board,"X"):
 			print "AI wins!"
 			break
-
-	# testing checkgameover
-	# board = [["-"]*8 for i in range(8)]
-	# board[0][0]="O"
-	# board[1][0]="O"
-	# board[2][0]="O"
-	# board[3][1]="X"
-	# board[3][2]="X"
-	# board[3][3]="X"
-	# board[3][4]="X"
-	# printboard(board)
-	# print checkGameOver(board,"X")
-
-	# testing getMove
-	# board = [["-"]*8 for i in range(8)]
-	# getMove(board)
-	# printboard(board)
-
-	# testing successors()
-	# board = [["-"]*8 for i in range(8)]
-	# board[0][0]="O"
-	# board[1][0]="O"
-	# board[2][0]="O"
-	# board[3][1]="X"
-	# board[3][2]="X"
-	# board[3][3]="X"
-	# board[3][4]="X"
-	# printboard(board)
-	# print "succs"
-	# for succ in successors(board,False):
-	# 	printboard(succ)
-
-	#testing minimax
-	# board = [["-"]*8 for i in range(8)]
-	# board[0][0]="O"
-	# board[1][0]="O"
-	# board[3][2]="X"
-	# board[3][3]="X"
-
-	# printboard(board)
-	# result = minimax2(board,2,negInfinity,posInfinity,False)
-	# print result[0]
-	# printboard(result[1])
-
-	# # board = result[1]
-	# # result = minimax(board,2,negInfinity,posInfinity,True)
-	# # printboard(result[1])

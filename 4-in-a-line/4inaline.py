@@ -124,104 +124,138 @@ def successors(board,max):
 
 def evaluation(board):
 	score = 0
-	player = "O"
-	# horizontal check 4-in-a-row
-	for j in range(8-3):
-		for i in range(8-3):
-			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == player:
-				score+=1000
-
-	# vertical check 4-in-a-row
-	for i in range(8-3):
+	for player in ["O","X"]:
+		# horizontal check
 		for j in range(8-3):
-			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == player:
-				score+=1000
-
-	# horizontal check 3-in-a-row
-	for j in range(8-3):
+				for i in range(8):
+					if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == player:
+						score += 1000 if player=="O" else -1000
+					if 	   board[i][j] == player and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == "-" \
+						or board[i][j] == "-" and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == player:						
+						score += 100 if player=="O" else -100
+					if 	   board[i][j] == player and board[i][j+1] == player and board[i][j+2] == "-" and board[i][j+3] == "-" \
+						or board[i][j] == "-" and board[i][j+1] == "-" and board[i][j+2] == player and board[i][j+3] == player:
+						score += 10 if player=="O" else -10
+					if 	   board[i][j] == player and board[i][j+1] == "-" and board[i][j+2] == "-" and board[i][j+3] == "-" \
+						or board[i][j] == "-" and board[i][j+1] == "-" and board[i][j+2] == "-" and board[i][j+3] == player:
+						score += 1 if player=="O" else -1
+		# vertical check
 		for i in range(8-3):
-			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == "-" or board[i][j] == "-" and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == player:
-				score+=100
-
-	# vertical check 3-in-a-row
-	for i in range(8-2):
-		for j in range(8-2):
-			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i][j+3] == "-" or board[i][j] == "-" and board[i+1][j] == player and board[i+2][j] == player and board[i][j+3] == player:
-				score+=100
-
-	# horizontal check 2-in-a-row
-	for j in range(8-3):
-		for i in range(8-3):
-			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == "-" and board[i][j+3] == "-" or board[i][j] == "-" and board[i][j+1] == "-" and board[i][j+2] == player and board[i][j+3] == player:
-				score+=10
-
-	# vertical check 2-in-a-row
-	for i in range(8-3):
-		for j in range(8-3):
-			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == "-" and board[i+3][j] == "-" or board[i][j] == "-" and board[i+1][j] == "-" and board[i+2][j] == player and board[i+3][j] == player:
-				score+=10
-
-	# horizontal check 1-in-a-row
-	for j in range(8-3):
-		for i in range(8-3):
-			if board[i][j] == player and board[i][j+1] == "-" and board[i][j+2] == "-" and board[i][j+3] == "-" or board[i][j] == "-" and board[i][j+1] == "-" and board[i][j+2] == "-" and board[i][j+3] == player:
-				score+=1
-
-	# vertical check 1-in-a-row
-	for i in range(8-3):
-		for j in range(8-3):
-			if board[i][j] == player and board[i+1][j] == "-" and board[i+2][j] == "-" and board[i+3][j] == "-" or board[i][j] == "-" and board[i+1][j] == "-" and board[i+2][j] == "-" and board[i+3][j] == player:
-				score+=1
-
-	player = "X"
-	# horizontal check 4-in-a-row
-	for j in range(8-3):
-		for i in range(8-3):
-			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == player:
-				score-=1000
-
-	# vertical check 4-in-a-row
-	for i in range(8-3):
-		for j in range(8-3):
-			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == player:
-				score-=1000
-
-	# horizontal check 3-in-a-row
-	for j in range(8-3):
-		for i in range(8-3):
-			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == "-" or board[i][j] == "-" and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == player:
-				score-=100
-
-	# vertical check 3-in-a-row
-	for i in range(8-3):
-		for j in range(8-3):
-			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i][j+3] == "-" or board[i][j] == "-" and board[i+1][j] == player and board[i+2][j] == player and board[i][j+3] == player:
-				score-=100
-
-	# horizontal check 2-in-a-row
-	for j in range(8-3):
-		for i in range(8-3):
-			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == "-" and board[i][j+3] == "-" or board[i][j] == "-" and board[i][j+1] == "-" and board[i][j+2] == player and board[i][j+3] == player:
-				score-=10
-
-	# vertical check 2-in-a-row
-	for i in range(8-3):
-		for j in range(8-3):
-			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == "-" and board[i+3][j] == "-" or board[i][j] == "-" and board[i+1][j] == "-" and board[i+2][j] == player and board[i+3][j] == player:
-				score-=10
-
-	# horizontal check 1-in-a-row
-	for j in range(8-3):
-		for i in range(8-3):
-			if board[i][j] == player and board[i][j+1] == "-" and board[i][j+2] == "-" and board[i][j+3] == "-" or board[i][j] == "-" and board[i][j+1] == "-" and board[i][j+2] == "-" and board[i][j+3] == player:
-				score-=1
-
-	# vertical check 1-in-a-row
-	for i in range(8-3):
-		for j in range(8-3):
-			if board[i][j] == player and board[i+1][j] == "-" and board[i+2][j] == "-" and board[i+3][j] == "-" or board[i][j] == "-" and board[i+1][j] == "-" and board[i+2][j] == "-" and board[i+3][j] == player:
-				score-=1
+			for j in range(8):
+					#vertical check
+					if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == player:
+						score += 1000 if player=="O" else -1000
+					if 	   board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == "-" \
+						or board[i][j] == "-" and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == player:
+						score += 100 if player=="O" else -100
+					if 	   board[i][j] == player and board[i+1][j] == player and board[i+2][j] == "-" and board[i+3][j] == "-" \
+						or board[i][j] == "-" and board[i+1][j] == "-" and board[i+2][j] == player and board[i+3][j] == player:
+						score += 10 if player=="O" else -10
+					if 	   board[i][j] == player and board[i+1][j] == "-" and board[i+2][j] == "-" and board[i+3][j] == "-" \
+						or board[i][j] == "-" and board[i+1][j] == "-" and board[i+2][j] == "-" and board[i+3][j] == player:
+						score += 1 if player=="O" else -1
 	return score
+
+# def evaluation(board):
+# 	score = 0
+# 	player = "O"
+# 	# horizontal check 4-in-a-row
+# 	for j in range(8-3):
+# 		for i in range(8):
+# 			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == player:
+# 				score+=1000
+
+# 	# vertical check 4-in-a-row
+# 	for i in range(8-3):
+# 		for j in range(8):
+# 			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == player:
+# 				score+=1000
+
+# 	# horizontal check 3-in-a-row
+# 	for j in range(8-3):
+# 		for i in range(8):
+# 			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == "-" or board[i][j] == "-" and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == player:
+# 				score+=100
+
+# 	# vertical check 3-in-a-row
+# 	for i in range(8-3):
+# 		for j in range(8):
+# 			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == "-" or board[i][j] == "-" and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == player:
+# 				score+=100
+
+# 	# horizontal check 2-in-a-row
+# 	for j in range(8-3):
+# 		for i in range(8):
+# 			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == "-" and board[i][j+3] == "-" or board[i][j] == "-" and board[i][j+1] == "-" and board[i][j+2] == player and board[i][j+3] == player:
+# 				score+=10
+
+# 	# vertical check 2-in-a-row
+# 	for i in range(8-3):
+# 		for j in range(8):
+# 			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == "-" and board[i+3][j] == "-" or board[i][j] == "-" and board[i+1][j] == "-" and board[i+2][j] == player and board[i+3][j] == player:
+# 				score+=10
+
+# 	# horizontal check 1-in-a-row
+# 	for j in range(8-3):
+# 		for i in range(8):
+# 			if board[i][j] == player and board[i][j+1] == "-" and board[i][j+2] == "-" and board[i][j+3] == "-" or board[i][j] == "-" and board[i][j+1] == "-" and board[i][j+2] == "-" and board[i][j+3] == player:
+# 				score+=1
+
+# 	# vertical check 1-in-a-row
+# 	for i in range(8-3):
+# 		for j in range(8):
+# 			if board[i][j] == player and board[i+1][j] == "-" and board[i+2][j] == "-" and board[i+3][j] == "-" or board[i][j] == "-" and board[i+1][j] == "-" and board[i+2][j] == "-" and board[i+3][j] == player:
+# 				score+=1
+
+# 	player = "X"
+# 	# horizontal check 4-in-a-row
+# 	for j in range(8-3):
+# 		for i in range(8):
+# 			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == player:
+# 				score-=1000
+
+# 	# vertical check 4-in-a-row
+# 	for i in range(8-3):
+# 		for j in range(8):
+# 			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == player:
+# 				score-=1000
+
+# 	# horizontal check 3-in-a-row
+# 	for j in range(8-3):
+# 		for i in range(8):
+# 			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == "-" or board[i][j] == "-" and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == player:
+# 				score-=100
+
+# 	# vertical check 3-in-a-row
+# 	for i in range(8-3):
+# 		for j in range(8):
+# 			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == "-" or board[i][j] == "-" and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == player:
+# 				score-=100
+
+# 	# horizontal check 2-in-a-row
+# 	for j in range(8-3):
+# 		for i in range(8):
+# 			if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == "-" and board[i][j+3] == "-" or board[i][j] == "-" and board[i][j+1] == "-" and board[i][j+2] == player and board[i][j+3] == player:
+# 				score-=10
+
+# 	# vertical check 2-in-a-row
+# 	for i in range(8-3):
+# 		for j in range(8):
+# 			if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == "-" and board[i+3][j] == "-" or board[i][j] == "-" and board[i+1][j] == "-" and board[i+2][j] == player and board[i+3][j] == player:
+# 				score-=10
+
+# 	# horizontal check 1-in-a-row
+# 	for j in range(8-3):
+# 		for i in range(8):
+# 			if board[i][j] == player and board[i][j+1] == "-" and board[i][j+2] == "-" and board[i][j+3] == "-" or board[i][j] == "-" and board[i][j+1] == "-" and board[i][j+2] == "-" and board[i][j+3] == player:
+# 				score-=1
+
+# 	# vertical check 1-in-a-row
+# 	for i in range(8-3):
+# 		for j in range(8):
+# 			if board[i][j] == player and board[i+1][j] == "-" and board[i+2][j] == "-" and board[i+3][j] == "-" or board[i][j] == "-" and board[i+1][j] == "-" and board[i+2][j] == "-" and board[i+3][j] == player:
+# 				score-=1
+# 	return score
 
 if __name__ == '__main__':
 	settings = setup()

@@ -136,29 +136,36 @@ def evaluation(board):
 		# horizontal check
 		for j in range(8-3):
 				for i in range(8):
+					# 4 in a row
 					if board[i][j] == player and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == player:
 						score += 1000 if player=="O" else -1000
+					# 3 in a row
 					if 	   board[i][j] == player and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == "-" \
 						or board[i][j] == "-" and board[i][j+1] == player and board[i][j+2] == player and board[i][j+3] == player:						
 						score += 100 if player=="O" else -100
+					# 2 in a row
 					if 	   board[i][j] == player and board[i][j+1] == player and board[i][j+2] == "-" and board[i][j+3] == "-" \
 						or board[i][j] == "-" and board[i][j+1] == "-" and board[i][j+2] == player and board[i][j+3] == player:
 						score += 10 if player=="O" else -10
+					# 1 in a row
 					if 	   board[i][j] == player and board[i][j+1] == "-" and board[i][j+2] == "-" and board[i][j+3] == "-" \
 						or board[i][j] == "-" and board[i][j+1] == "-" and board[i][j+2] == "-" and board[i][j+3] == player:
 						score += 1 if player=="O" else -1
 		# # vertical check
 		for i in range(8-3):
 			for j in range(8):
-					#vertical check
+					# 4 in a column
 					if board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == player:
 						score += 1000 if player=="O" else -1000
+					# 3 in a column
 					if 	   board[i][j] == player and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == "-" \
 						or board[i][j] == "-" and board[i+1][j] == player and board[i+2][j] == player and board[i+3][j] == player:
 						score += 100 if player=="O" else -100
+					# 2 in a column
 					if 	   board[i][j] == player and board[i+1][j] == player and board[i+2][j] == "-" and board[i+3][j] == "-" \
 						or board[i][j] == "-" and board[i+1][j] == "-" and board[i+2][j] == player and board[i+3][j] == player:
 						score += 10 if player=="O" else -10
+					# 1 in a column
 					if 	   board[i][j] == player and board[i+1][j] == "-" and board[i+2][j] == "-" and board[i+3][j] == "-" \
 						or board[i][j] == "-" and board[i+1][j] == "-" and board[i+2][j] == "-" and board[i+3][j] == player:
 						score += 1 if player=="O" else -1

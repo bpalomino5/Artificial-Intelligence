@@ -1,5 +1,5 @@
 # Author: Brandon Palomino
-# Date: 8/31/17
+# Date: 9/1/17
 # Description: Program where user plays 4 in a line game against CPU that uses alpha-beta pruning to calculate best moves
 
 from copy import deepcopy
@@ -13,9 +13,10 @@ timeLimit = 30
 def setup():
 	global timeLimit
 	board = [["-"]*8 for i in range(8)]
+	print "4 in a Line Game!"
 	print "Would you like to go first (y/n)? : ",
 	first = raw_input()
-	print "How much time would you like (in seconds) : ",
+	print "How much time will the AI run for? (in seconds) : ",
 	time = raw_input()
 	if time.isdigit():
 		timeLimit = int(time)
